@@ -1,75 +1,73 @@
--- 🐾 YexScript Visual Pet Spawner by Yex
-local plr = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui", plr:WaitForChild("PlayerGui"))
-gui.Name = "YexScript_PetSpawnerUI"
+-- 🧪 YexScript | REAL Visual Dupe (Injects to real inventory)
 
--- Main Frame
-local frame = Instance.new("Frame", gui)
-frame.Size = UDim2.new(0, 280, 0, 160)
+local plr = game.Players.LocalPlayer
+local gui = plr:WaitForChild("PlayerGui")
+
+-- Step 1: Try to find real pet inventory frame
+local petInvFrame = nil
+for _,v in pairs(gui:GetDescendants()) do
+    if v:IsA("Frame") and tostring(v):lower():find("pet") and v:FindFirstChildWhichIsA("UIGridLayout") then
+        petInvFrame = v
+        break
+    end
+end
+
+if not petInvFrame then
+    warn("❌ Could not find real pet inventory frame. Open your pet inventory first.")
+    return
+end
+
+-- Step 2: Create GUI for dupe input
+local screenGui = Instance.new("ScreenGui", gui)
+screenGui.Name = "YexScript_DuperUI"
+
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 250, 0, 150)
 frame.Position = UDim2.new(0.35, 0, 0.3, 0)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
 
--- Title
 local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 35)
-title.Text = "🧪 YexScript | Visual Pet Spawner"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "🧬 YexScript | Real Visual Dupe"
 title.BackgroundTransparency = 1
 title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 17
+title.TextSize = 16
 
--- Input box
 local input = Instance.new("TextBox", frame)
 input.Size = UDim2.new(0.9, 0, 0, 30)
 input.Position = UDim2.new(0.05, 0, 0.4, 0)
-input.PlaceholderText = "Enter Pet Name (e.g. Raccoon)"
-input.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+input.PlaceholderText = "Enter Pet Name"
+input.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 input.TextColor3 = Color3.new(1, 1, 1)
 input.Font = Enum.Font.Gotham
 input.TextSize = 14
 input.Text = ""
 
--- Spawn button
-local spawn = Instance.new("TextButton", frame)
-spawn.Text = "VISUAL DUPLICATE"
-spawn.Size = UDim2.new(0.9, 0, 0, 30)
-spawn.Position = UDim2.new(0.05, 0, 0.7, 0)
-spawn.BackgroundColor3 = Color3.fromRGB(90, 90, 200)
-spawn.TextColor3 = Color3.new(1, 1, 1)
-spawn.Font = Enum.Font.GothamBold
-spawn.TextSize = 16
+local btn = Instance.new("TextButton", frame)
+btn.Size = UDim2.new(0.9, 0, 0, 30)
+btn.Position = UDim2.new(0.05, 0, 0.7, 0)
+btn.Text = "VISUAL DUPLICATE"
+btn.BackgroundColor3 = Color3.fromRGB(80, 100, 255)
+btn.TextColor3 = Color3.new(1, 1, 1)
+btn.Font = Enum.Font.GothamBold
+btn.TextSize = 14
 
--- Fake Inventory (visual only)
-local fakeInv = Instance.new("ScrollingFrame", gui)
-fakeInv.Name = "YexInventory"
-fakeInv.Size = UDim2.new(0, 300, 0, 200)
-fakeInv.Position = UDim2.new(0.7, 0, 0.3, 0)
-fakeInv.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-fakeInv.CanvasSize = UDim2.new(0, 0, 0, 0)
-fakeInv.ScrollBarThickness = 6
-
-local layout = Instance.new("UIListLayout", fakeInv)
-layout.Padding = UDim.new(0, 5)
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-
--- Add pet button logic
-spawn.MouseButton1Click:Connect(function()
-	local petName = input.Text
-	if petName and petName ~= "" then
-		local pet = Instance.new("TextLabel")
-		pet.Size = UDim2.new(1, -10, 0, 30)
-		pet.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-		pet.TextColor3 = Color3.new(1, 1, 1)
-		pet.Text = "🐾 " .. petName .. "  [Age: 1 Day]  [Weight: 1.0kg]"
-		pet.Font = Enum.Font.Gotham
-		pet.TextSize = 14
-		pet.Parent = fakeInv
-
-		-- Auto-expand canvas
-		task.wait(0.1)
-		fakeInv.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+-- Step 3: Duplicate into inventory
+btn.MouseButton1Click:Connect(function()
+	local name = input.Text
+	if name ~= "" then
+		local petClone = Instance.new("TextLabel")
+		petClone.Size = UDim2.new(0, 100, 0, 100)
+		petClone.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+		petClone.TextColor3 = Color3.new(1, 1, 1)
+		petClone.Text = "🐾 " .. name
+		petClone.Font = Enum.Font.GothamBold
+		petClone.TextSize = 14
+		petClone.Name = name
+		petClone.Parent = petInvFrame
 	end
 end)
